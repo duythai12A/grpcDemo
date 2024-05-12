@@ -30,6 +30,12 @@ public class GreetingServer {
         public void greeting(GreetingRequest request, StreamObserver<GreetingResponse> responseObserver) {
             String clientId = Constants.CLIENT_ID_CONTEXT_KEY.get();
             System.out.println("Processing request from " + clientId);
+            String clientIp = Constants.CLIENT_IP.get();
+            System.out.println("Processing ip from " + clientIp);
+            String clientUsername = Constants.CLIENT_USERNAME.get();
+            System.out.println("Processing username from " + clientUsername);
+            String clientPassword = Constants.CLIENT_PASSWORD.get();
+            System.out.println("Processing password from " + clientPassword);
 
             String name = request.getName();
             String greeting = String.format("Hello, %s!", name.isBlank() ? "World" : name);

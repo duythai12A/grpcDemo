@@ -4,6 +4,8 @@ package dev.sultanov.grpc.authentication.shared;
 
 message GreetingRequest {
     string name = 1;
+    string pass = 2;
+    string ip =3;
 }
 
 message GreetingResponse {
