@@ -1,0 +1,51 @@
+import com.itextpdf.kernel.pdf.*;
+import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor;
+import com.itextpdf.kernel.pdf.canvas.parser.listener.LocationTextExtractionStrategy;
+import com.itextpdf.kernel.pdf.canvas.parser.listener.TextChunk;
+import com.itextpdf.pdfcleanup.autosweep.PdfAutoSweep;
+import com.itextpdf.pdfcleanup.PdfCleanUpLocation;
+import com.itextpdf.pdfcleanup.PdfCleanUpTool;
+import com.itextpdf.pdfcleanup.autosweep.RegexBasedCleanupStrategy;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
+
+public class RedactLine {
+
+    public static void main(String[] args) throws IOException {
+        String src = "input.pdf"; // Your input PDF
+        String dest = "output_redacted.pdf"; // Output PDF
+        String lineToRemove = "This is the line to remove"; // The line to redact
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(src), new PdfWriter(dest));
+
+        // 1. Find the coordinates of the line (simplified example)
+        List<PdfCleanUpLocation> locations = new ArrayList<>();
+        for (int i = 1; i <= pdfDoc.getNumberOfPages(); i++) {
+            PdfPage page = pdfDoc.getPage(i);
+            String text = PdfTextExtractor.getTextFromPage(page, new LocationTextExtractionStrategy());
+
+            if (text.contains(lineToRemove)) {
+                // This is a very basic way to find the line. You'll likely need a more
+                // sophisticated approach based on your PDF's structure.
+                // You might need to iterate through TextChunk objects to get precise coordinates.
+                // Assume for simplicity that we found the rectangle coordinates here:
+                float x = 100;
+                float y = 700;
+                float width = 200;
+                float height = 15;
+
+                locations.add(new PdfCleanUpLocation(i, new com.itextpdf.kernel.geom.Rectangle(x, y, width, height)));
+            }
+        }
+        
+        // 2. Apply redaction using pdfSweep
+        PdfCleanUpTool cleaner = new PdfCleanUpTool(pdfDoc, locations);
+        cleaner.cleanUp();
+
+        pdfDoc.close();
+    }
+}
